@@ -1,23 +1,27 @@
-﻿using System.Collections.Generic;
-using System.Reflection.Metadata.Ecma335;
-using CardGame.Services;
-using CardGameUtilities;
+﻿using GameUtilities.CardGameUtilities._Services;
 
-namespace CardGame.CardSelectors;
+namespace GameUtilities.CardGameUtilities.CardSelectors;
 
-public class TopCardSelector : ICardSelector
+public class TopCardSelector : ICardSelectorService
 {
-	public Card SelectCardFromPile(CardPile cardPile)
+    private readonly ICollection<Card> _selectables;
+
+    public TopCardSelector(ICollection<Card> selectables)
     {
-        if (cardPile.IsEmpty)
+        _selectables = selectables;
+    }
+
+    public Card SelectCard()
+    {
+        if (_selectables.Count == 0)
         {
             throw new InvalidOperationException("Cannot select a card from an empty pile.");
         }
 
-        return cardPile.Cards.First();
+        return _selectables.First();
     }
 
-    public ICollection<Card> SelectCardsFromPile(CardPile cardPile, int numberOfCards)
+    public ICollection<Card> SelectCards(int numberOfCards)
     {
         if (numberOfCards <= 0)
         {
@@ -28,7 +32,7 @@ public class TopCardSelector : ICardSelector
 
         for (int i = 0; i < numberOfCards; i++) // NEW
         {
-            Card selectedCard = SelectCardFromPile(cardPile);
+            Card selectedCard = SelectCard();
             selectedCards.Add(selectedCard);
         }
 
